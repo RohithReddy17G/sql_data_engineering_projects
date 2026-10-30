@@ -1,0 +1,4 @@
+*.duckdb
+
+data/
+1_EDA/

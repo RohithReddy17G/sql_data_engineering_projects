@@ -41,4 +41,20 @@ UNION ALL
     UNION ALL
     SELECT 'Job Postings Fact',COUNT(*) FROM job_postings_fact
     UNION ALL
-    SELECT 'Skills job Dim', COUNT(*) FROM skills_job_dim;
+    SELECT 'Skills job Dim', COUNT(*) FROM skills_job_dim
+
+
+    SELECT '=== Company Dimension Sample===' AS info;
+    SELECT * FROM company_dim LIMIT 5;
+
+SELECT '=== Skills Dimension Sample===' AS info;
+    SELECT * FROM skills_dim LIMIT 5;
+
+    SELECT '=== job postings fact ===' AS info;
+    SELECT * FROM job_postings_fact LIMIT 5;
+
+    SELECT '=== Company Dimension Sample===' AS info;
+    SELECT * FROM company_dim LIMIT 5;
+
+    SELECT '=== Skills job Bridge Sample===' AS info;
+    SELECT * FROM skills_job_dim LIMIT 5;

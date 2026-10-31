@@ -5,5 +5,9 @@
 
 -- STEP 2: DW - LOAD DATA FROM CSV FILES INTO TABLES
 .read 02_load_schema_dw.sql
+
 --STEP3 : DW - CREATE FLAT MART
 .read 03_create_flat_mart.sql
+
+---STEP 4 :DW - CREATE RECORD MART
+.read 04_create_skills_mart.sql

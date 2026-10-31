@@ -11,3 +11,7 @@
 
 ---STEP 4 :DW - CREATE RECORD MART
 .read 04_create_skills_mart.sql
+----STEP 5 : DW -CREATE PRIORITY MART
+.read 05_create_priority_mart.sql
+--STEP 6: DW-UPDATE PRIORITY MART
+.read 06_update_priority_mart.sql

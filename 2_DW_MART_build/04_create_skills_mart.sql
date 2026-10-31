@@ -106,16 +106,30 @@ SELECT
 FROM job_postings_prep
 GROUP BY ALL
 ORDER BY skill_id, month_start_date, job_title_short;
+SELECT 'Skill Dimension' AS table_name, COUNT(*) AS record_count
 
-SELECT 'Skill Dimension'AS table_name, COUNT(*) AS record_count FROM skills_mart.dim_skills
-UNION ALL
-SELECT 'Date month Dimension', COUNT(*) FROM skills_mart.dim_date_month
-UNION ALL
-SELECT 'Skill Demand Fact',COUNT(*) FROM skills_mart.fact_skill_demand_monthly;
+FROM skills_mart.dim_skills
 
-SELECT '=== Skill Dimension Sample===' AS info;
-SELECT * FROM skills_mart.dim_skill LIMIT 5;
-SELECT '=== Date Month Dimension===' AS info;
+UNION ALL
+
+SELECT 'Date Month Dimension', COUNT(*)
+
+FROM skills_mart.dim_date_month
+
+UNION ALL
+
+SELECT 'Skill Demand Fact', COUNT(*)
+
+FROM skills_mart.fact_skill_demand_monthly;
+
+SELECT '=== Skill Dimension Sample ===' AS info;
+
+SELECT * FROM skills_mart.dim_skills LIMIT 5;
+
+SELECT '=== Date Month Dimension ===' AS info;
+
 SELECT * FROM skills_mart.dim_date_month LIMIT 5;
-SELECT '=== Skill Demand Fact===' AS info;
+
+SELECT '=== Skill Demand Fact ===' AS info;
+
 SELECT * FROM skills_mart.fact_skill_demand_monthly LIMIT 5;

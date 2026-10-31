@@ -1,0 +1,90 @@
+-- Step 6: Update Priority Roles Mart
+
+SELECT '=== UPDATING ROLES FOR PRIORITY MART ===' AS info;
+
+-- Update Data Engineer to Priority 1
+UPDATE priority_mart.priority_roles
+SET priority_lvl = 1
+WHERE role_name = 'Data Engineer';
+
+
+-- Add Data Scientist as Priority 3
+INSERT INTO priority_mart.priority_roles
+    (role_id, role_name, priority_lvl)
+VALUES
+    (4, 'Data Scientist', 3)
+ON CONFLICT (role_id) DO UPDATE SET
+    role_name = EXCLUDED.role_name,
+    priority_lvl = EXCLUDED.priority_lvl;
+
+SELECT * FROM priority_mart.priority_roles;
+
+
+SELECT '=== CREATING TEMP SOURCE TABLE ===' AS info;
+
+CREATE OR REPLACE TEMP TABLE src_priority_jobs AS
+SELECT
+    jpf.job_id,
+    r.role_name AS job_title_short,
+    cd.name AS company_name,
+    jpf.job_posted_date,
+    jpf.salary_year_avg,
+    r.priority_lvl,
+    CURRENT_TIMESTAMP AS updated_at
+FROM job_postings_fact AS jpf
+LEFT JOIN dw_marts.company_dim AS cd
+    ON jpf.company_id = cd.company_id
+INNER JOIN priority_mart.priority_roles AS r
+    ON jpf.job_title_short = r.role_name;
+
+
+-- Check source records
+SELECT COUNT(*) AS source_records
+FROM src_priority_jobs;
+
+
+SELECT '=== BATCH UPDATING PRIORITY JOBS SNAPSHOT ===' AS info;
+
+MERGE INTO priority_mart.priority_jobs_snapshot AS tgt
+USING src_priority_jobs AS src
+ON tgt.job_id = src.job_id
+
+WHEN MATCHED
+    AND tgt.priority_lvl IS DISTINCT FROM src.priority_lvl
+THEN UPDATE SET
+    priority_lvl = src.priority_lvl,
+    updated_at = src.updated_at
+
+WHEN NOT MATCHED
+THEN INSERT (
+    job_id,
+    job_title_short,
+    company_name,
+    job_posted_date,
+    salary_year_avg,
+    priority_lvl,
+    updated_at
+)
+VALUES (
+    src.job_id,
+    src.job_title_short,
+    src.company_name,
+    src.job_posted_date,
+    src.salary_year_avg,
+    src.priority_lvl,
+    src.updated_at
+);
+
+
+-- Final validation
+SELECT
+    job_title_short,
+    COUNT(*) AS job_count,
+    MIN(priority_lvl) AS priority_lvl,
+    MIN(updated_at) AS updated_at
+FROM priority_mart.priority_jobs_snapshot
+GROUP BY job_title_short
+ORDER BY job_count DESC;
+
+SELECT COUNT(*) AS total_records
+FROM priority_mart.priority_jobs_snapshot;
